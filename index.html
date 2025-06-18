@@ -1,24 +1,61 @@
-<script>
-  window.onload = function () {
-    const startDate = new Date();
-    startDate.setHours(0, 0, 0, 0);
-    startDate.setDate(startDate.getDate() + 21);
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Library Book Due Reminder</title>
+  <script>
+    window.onload = function () {
+      const holidays = [
+        '2025-09-01', // Labor Day
+        '2025-11-11', // Veterans Day
+        '2025-11-28', // Day after Thanksgiving
+        '2025-12-24', // Christmas Eve
+        '2025-12-25'  // Christmas Day
+      ];
 
-    const endDate = new Date(startDate);
-    endDate.setDate(endDate.getDate() + 1); // next day for proper all-day duration
+      // Helper: format date as YYYY-MM-DD
+      function formatDateISO(date) {
+        return date.toISOString().split('T')[0];
+      }
 
-    const format = (d) => {
-      const yyyy = d.getUTCFullYear();
-      const mm = String(d.getUTCMonth() + 1).padStart(2, '0');
-      const dd = String(d.getUTCDate()).padStart(2, '0');
-      return `${yyyy}${mm}${dd}`;
+      // Helper: check if date is a Sunday
+      function isSunday(date) {
+        return date.getDay() === 0;
+      }
+
+      // Calculate initial due date (+21 days)
+      const startDate = new Date();
+      startDate.setHours(0, 0, 0, 0);
+      startDate.setDate(startDate.getDate() + 21);
+
+      // Adjust if the due date falls on a holiday or Sunday
+      while (holidays.includes(formatDateISO(startDate)) || isSunday(startDate)) {
+        startDate.setDate(startDate.getDate() + 1);
+      }
+
+      // End date is next day (Google Calendar treats end as exclusive)
+      const endDate = new Date(startDate);
+      endDate.setDate(endDate.getDate() + 1);
+
+      // Format to YYYYMMDD for Google Calendar
+      function formatCalendarDate(d) {
+        const yyyy = d.getUTCFullYear();
+        const mm = String(d.getUTCMonth() + 1).padStart(2, '0');
+        const dd = String(d.getUTCDate()).padStart(2, '0');
+        return `${yyyy}${mm}${dd}`;
+      }
+
+      const startStr = formatCalendarDate(startDate);
+      const endStr = formatCalendarDate(endDate);
+
+      // Google Calendar URL with dynamic due date
+      const calendarURL = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=Library+Book+Due+Reminder&dates=${startStr}/${endStr}&details=Your+library+books+are+due+today!`;
+
+      window.location.href = calendarURL;
     };
-
-    const startStr = format(startDate);
-    const endStr = format(endDate);
-
-    const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=Library+Book+Due+Reminder&dates=${startStr}/${endStr}&details=Your+library+books+are+due+today!`;
-
-    window.location.href = url;
-  };
-</script>
+  </script>
+</head>
+<body>
+  <p>Redirecting to your calendar reminder...</p>
+</body>
+</html>
