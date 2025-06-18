@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Library Book Due Reminder</title>
+  <script>
+    window.onload = function () {
+      const now = new Date();
+      now.setHours(0, 0, 0, 0);
+      now.setDate(now.getDate() + 21);
+
+      const yyyy = now.getUTCFullYear();
+      const mm = String(now.getUTCMonth() + 1).padStart(2, '0');
+      const dd = String(now.getUTCDate()).padStart(2, '0');
+
+      const dateStr = `${yyyy}${mm}${dd}`;
+
+      const calendarURL = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=Library+Book+Due+Reminder&dates=${dateStr}/${dateStr}&details=Your+library+books+are+due+today!`;
+
+      window.location.href = calendarURL;
+    };
+  </script>
+</head>
+<body>
+  <p>Redirecting to your calendar...</p>
+</body>
+</html>
